@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<!-- saved from url=(0069)https://sesync-ci.github.io/data-manipulation-in-R-lesson/2016/07/26/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Data manipulation with tidyr and dplyr</title>
+  <meta name="description" content="Data manipulation with tidyr and dplyr">
+
+  <style type="text/css">
+    
+   body {
+  background-color: #fff;
+  padding:50px;
+  font: 14px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color:#727272;
+  font-weight:400;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color:#222;
+  margin:0 0 20px;
+}
+
+p, ul, ol, table, pre, dl {
+  margin:0 0 20px;
+}
+
+h1, h2, h3 {
+  line-height:1.1;
+}
+
+h1 {
+  font-size:28px;
+}
+
+h2 {
+  color:#393939;
+}
+
+h3, h4, h5, h6 {
+  color:#494949;
+}
+
+a {
+  color:#39c;
+  text-decoration:none;
+}
+
+a:hover {
+  color:#069;
+}
+
+a small {
+  font-size:11px;
+  color:#777;
+  margin-top:-0.3em;
+  display:block;
+}
+
+a:hover small {
+  color:#777;
+}
+
+.wrapper {
+  width:860px;
+  margin:0 auto;
+}
+
+blockquote {
+  border-left:1px solid #e5e5e5;
+  margin:0;
+  padding:0 0 0 20px;
+  font-style:italic;
+}
+
+code, pre {
+  font-family:Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal, Consolas, Liberation Mono, DejaVu Sans Mono, Courier New, monospace;
+  color:#333;
+  font-size:12px;
+}
+
+pre {
+  padding:8px 15px;
+  background: #f8f8f8;
+  border-radius:5px;
+  border:1px solid #e5e5e5;
+  overflow-x: auto;
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+}
+
+th, td {
+  text-align:left;
+  padding:5px 10px;
+  border-bottom:1px solid #e5e5e5;
+}
+
+dt {
+  color:#444;
+  font-weight:700;
+}
+
+th {
+  color:#444;
+}
+
+img {
+  max-width:100%;
+}
+
+header {
+  width:270px;
+  float:left;
+  position:fixed;
+  -webkit-font-smoothing:subpixel-antialiased;
+}
+
+header ul {
+  list-style:none;
+  height:40px;
+  padding:0;
+  background: #f4f4f4;
+  border-radius:5px;
+  border:1px solid #e0e0e0;
+  width:270px;
+}
+
+header li {
+  width:89px;
+  float:left;
+  border-right:1px solid #e0e0e0;
+  height:40px;
+}
+
+header li:first-child a {
+  border-radius:5px 0 0 5px;
+}
+
+header li:last-child a {
+  border-radius:0 5px 5px 0;
+}
+
+header ul a {
+  line-height:1;
+  font-size:11px;
+  color:#999;
+  display:block;
+  text-align:center;
+  padding-top:6px;
+  height:34px;
+}
+
+header ul a:hover {
+  color:#999;
+}
+
+header ul a:active {
+  background-color:#f0f0f0;
+}
+
+strong {
+  color:#222;
+  font-weight:700;
+}
+
+header ul li + li + li {
+  border-right:none;
+  width:89px;
+}
+
+header ul a strong {
+  font-size:14px;
+  display:block;
+  color:#222;
+}
+
+section {
+  width:500px;
+  float:right;
+  padding-bottom:50px;
+}
+
+small {
+  font-size:11px;
+}
+
+hr {
+  border:0;
+  background:#e5e5e5;
+  height:1px;
+  margin:0 0 20px;
+}
+
+footer {
+  width:270px;
+  float:left;
+  position:fixed;
+  bottom:50px;
+  -webkit-font-smoothing:subpixel-antialiased;
+}
+
+@media print, screen and (max-width: 960px) {
+
+  div.wrapper {
+    width:auto;
+    margin:0;
+  }
+
+  header, section, footer {
+    float:none;
+    position:static;
+    width:auto;
+  }
+
+  header {
+    padding-right:320px;
+  }
+
+  section {
+    border:1px solid #e5e5e5;
+    border-width:1px 0;
+    padding:20px 0;
+    margin:0 0 20px;
+  }
+
+  header a small {
+    display:inline;
+  }
+
+  header ul {
+    position:absolute;
+    right:50px;
+    top:52px;
+  }
+}
+
+@media print, screen and (max-width: 720px) {
+  body {
+    word-wrap:break-word;
+  }
+
+  header {
+    padding:0;
+  }
+
+  header ul, header p.view {
+    position:static;
+  }
+
+  pre, code {
+    word-wrap:normal;
+  }
+}
+
+@media print, screen and (max-width: 480px) {
+  body {
+    padding:15px;
+  }
+
+  header ul {
+    width:99%;
+  }
+
+  header li, header ul li + li + li {
+    width:33%;
+  }
+}
+
+@media print {
+  body {
+    padding:0.4in;
+    font-size:12pt;
+    color:#444;
+  }
+}
+
+    
+   .text-document pre {
+       background-color: #000000;
+   }
+
+   .text-document code {
+       color: #FFFFFF;
+   }
+
+   .input pre {
+       background-color: #EBECE4;
+   }
+   
+   .output pre {
+       background-color: #ECECC7;
+   }
+  </style>
+<style type="text/css">:root topadblock, :root td[valign="top"] > .mainmenu[style="padding:10px 0 0 0 !important;"], :root input[onclick^="window.open('http://www.FriendlyDuck.com/AF_"], :root img[alt^="Fuckbook"], :root iframe[src^="http://cdn1.adexprt.com/"], :root iframe[src^="http://ad.yieldmanager.com/"], :root iframe[id^="google_ads_iframe"], :root div[id^="proadszone-"], :root div[id^="mainads"], :root div[id^="lazyad-"], :root div[id^="google_dfp_"], :root div[id^="dmRosAdWrapper"], :root div[id^="div_ad_stack_"], :root div[id^="div-adtech-ad-"], :root div[id^="cns_ads_"], :root div[id^="ads300_250-widget"], :root iframe[src^="http://cdn2.adexprt.com/"], :root div[id^="ads300_100-widget"], :root div[id^="ads250_250-widget"], :root div[id^="adrotate_widgets-"], :root div[id^="ad_script_"], :root div[id^="ad-server-"], :root div[id^="acm-ad-tag-"], :root div[id^="MarketGid"], :root div[id^="ADV-SLOT-"], :root div[class^="proadszone-"], :root div[class$="dealnews"] > .dealnews, :root div > [class][onclick*=".updateAnalyticsEvents"], :root bottomadblock, :root aside[id^="div-gpt-ad"], :root a[target="_blank"][href^="http://api.taboola.com/"], :root a[style="display:block;width:300px;min-height:250px"][href^="http://li.cnet.com/click?"], :root a[onmousedown^="this.href='https://paid.outbrain.com/network/redir?"][target="_blank"] + .ob_source, :root a[onmousedown^="this.href='http://staffpicks.outbrain.com/network/redir?"][target="_blank"] + .ob_source, :root a[onmousedown^="this.href='http://staffpicks.outbrain.com/network/redir?"][target="_blank"], :root a[onmousedown^="this.href='http://paid.outbrain.com/network/redir?"][target="_blank"] + .ob_source, :root a[onmousedown^="this.href='/wp-content/embed-ad-content/"], :root iframe[src^="http://static.mozo.com.au/strips/"], :root a[href^="https://www.spyoff.com/"], :root a[href^="https://www.share-online.biz/affiliate/"], :root a[href^="https://www.oboom.com/ad/"], :root a[href^="https://www.googleadservices.com/pagead/aclk?"], :root a[href^="https://www.firstload.com/affiliate/"], :root a[href^="https://www.adskeeper.co.uk/"], :root a[href^="https://trust.zone/"], :root div[class^="gemini-ad"], :root a[href^="https://torguard.net/aff.php"], :root div[id^="YFBMSN"], :root a[href^="https://secure.eveonline.com/ft/?aid="], :root a[href^="https://pubads.g.doubleclick.net/"], :root a[href^="https://go.ad2up.com/"], :root a[href^="https://farm.plista.com/pets"], :root a[href^="https://click.plista.com/pets"], :root a[href^="https://affiliates.bet-at-home.com/processing/"], :root a[href^="https://adhealers.com/"], :root a[href^="https://ad.atdmt.com/"], :root div[itemtype="http://schema.org/WPAdBlock"], :root a[href^="http://xads.zedo.com/"], :root a[href^="http://wxdownloadmanager.com/dl/"], :root a[href^="http://www1.clickdownloader.com/"], :root a[href^="http://www.zergnet.com/i/"], :root a[href^="http://www.usearchmedia.com/signup?"], :root a[href^="http://www.torntv-downloader.com/"], :root a[href^="http://www.tirerack.com/affiliates/"], :root a[href^="http://www.text-link-ads.com/"], :root div[id^="div_openx_ad_"], :root a[href^="http://www.streamate.com/exports/"], :root a[href^="http://www.sfippa.com/"], :root a[href^="http://bluehost.com/track/"], :root a[href^="http://www.seekbang.com/cs/"], :root a[href^="http://www.quick-torrent.com/download.html?aff"], :root #flowplayer > div[style="z-index: 208; position: absolute; width: 300px; height: 275px; left: 222.5px; top: 85px;"], :root a[href^="http://www.plus500.com/?id="], :root div[id^="google_ads_iframe_"], :root a[href^="http://www.affiliates1128.com/processing/"], :root a[href^="http://www.pheedo.com/"], :root a[href^="http://guideways.info/"], :root #\5f _nq__hh[style="display:block!important"], :root a[href^="http://www.on2url.com/app/adtrack.asp"], :root a[href^="http://www.myvpn.pro/"], :root a[href^="http://liversely.net/"], :root a[href^="http://www.my-dirty-hobby.com/?sub="], :root a[href^="http://www.download-provider.org/"], :root a[href^="http://www.installads.net/"], :root a[href^="http://www.incredimail.com/?id="], :root a[href^="http://tracking.toroadvertising.com/"], :root a[href^="http://www.graboid.com/affiliates/"], :root a[href^="http://www.gamebookers.com/cgi-bin/intro.cgi?"], :root a[href^="http://www.friendlyquacks.com/"], :root a[href^="http://cdn3.adbrau.com/"], :root a[href^="http://www.friendlyadvertisements.com/"], :root a[href^="http://ul.to/ref/"], :root a[href^="http://www.freefilesdownloader.com/"], :root a[href^="http://www.fpcTraffic2.com/blind/in.cgi?"], :root a[href^="http://www.fonts.com/BannerScript/"], :root a[href^="http://www.fleshlight.com/"], :root a[href^="http://www.mysuperpharm.com/"], :root a[href^="http://www.firstload.de/affiliate/"], :root a[href^="http://www.firstload.com/affiliate/"], :root a[href*=".trust.zone"], :root a[href^="http://www.firstclass-download.com/"], :root a[href^="http://www.faceporn.net/free?"], :root a[href^="http://clicks.binarypromos.com/"], :root a[href^="http://www.downloadplayer1.com/"], :root a[href^="http://www.down1oads.com/"], :root a[href^="http://www.liutilities.com/"], :root a[href^="http://tracking.deltamediallc.com/"], :root a[href^="http://www.dl-provider.com/search/"], :root a[href^="http://www.coinducks.com/AF_"], :root a[href^="https://bs.serving-sys.com"], :root a[href^="https://atomidownload.com/"], :root a[href^="http://adserver.itsfogo.com/"], :root a[href^="http://adtransfer.net/"], :root a[href^="http://www.bet365.com/dl/~offer?affiliate="], :root a[href^="http://www.badoink.com/go.php?"], :root div[id^="advads-"], :root a[href^="http://www.ringtonematcher.com/"], :root a[href^="http://www.adshost2.com/"], :root a[href^="http://www.adbrite.com/mb/commerce/purchase_form.php?"], :root a[href^="http://www.FriendlyDuck.com/AF_"], :root a[href^="http://www.brightwheel.info/"], :root a[href^="http://www.1clickdownloader.com/"], :root a[href^="http://www.123-reg.co.uk/affiliate2.cgi"], :root a[href^="http://prousa.work/"], :root a[href^="http://see-work.info/"], :root a[href^="http://websitedhoome.com/"], :root a[href^="http://www.paddypower.com/?AFF_ID="], :root a[href^="http://uploaded.net/ref/"], :root a[href^="http://track.adform.net/"], :root a[href^="http://t.wowtrk.com/"], :root a[href^="http://adprovider.adlure.net/"], :root a[href^="http://tezfiles.com/pr/"], :root a[href^="http://go.seomojo.com/tracking202/"], :root a[href^="http://www.revenuehits.com/"], :root a[href^="http://www.easydownloadnow.com/"], :root .mw > #rcnt > #center_col > #taw > .c, :root a[href^="http://taboola-"][href*="/redirect.php?app.type="], :root a[href^="http://t.mdn2015x3.com/"], :root a[href^="http://clickandjoinyourgirl.com/"], :root a[href^="http://webtrackerplus.com/"], :root a[href^="http://b.bestcompleteusa.info/"], :root a[href^="http://t.mdn2015x2.com/"], :root a[href^="http://sharesuper.info/"], :root a[href^="http://www.bet365.com/home/default.asp?affiliate="], :root a[href^="http://getlinksinaseconds.com/"], :root a[href^="http://secure.signup-way.com/"], :root a[href^="http://secure.signup-page.com/"], :root [onclick^="window.open('http://adultfriendfinder.com/search/"], :root a[href^="http://secure.hostgator.com/~affiliat/"], :root .ra[width="30%"][align="right"] + table[width="70%"][cellpadding="0"], :root a[href^="http://searchtabnew.com/"], :root a[href^="http://ryushare.com/affiliate.python"], :root a[href^="http://record.commissionking.com/"], :root a[href^="http://record.betsafe.com/"], :root a[href^="http://pubads.g.doubleclick.net/"], :root a[href^="http://www.epicgameads.com/"], :root a[href^="http://gca.sh/user/register?ref="], :root a[href^="http://promos.bwin.com/"], :root a[href^="https://www.FriendlyDuck.com/AF_"], :root a[href^="http://prochina.link/"], :root a[href^="http://z1.zedo.com/"], :root a[href^="http://pokershibes.com/index.php?ref="], :root a[href^="http://n217adserv.com/"], :root a[href^="http://mojofun.info/"], :root a[href^="http://mmo123.co/"], :root .plistaList > .itemLinkPET, :root a[href^="http://mgid.com/"], :root a[href^="http://marketgid.com"], :root a[href^="http://www.socialsex.com/"], :root a[href^="http://www.affbuzzads.com/affiliate/"], :root a[href*=".qertewrt.com/"], :root a[href^="http://lp.ncdownloader.com/"], :root a[href*=".adsrv.eacdn.com/"] > img, :root a[href^="http://lp.ilivid.com/"], :root #rhs_block .xpdopen > ._OKe > div > .mod > ._yYf, :root a[href^="http://lp.ezdownloadpro.info/"], :root a[href^="http://liversely.com/"], :root a[href^="http://latestdownloads.net/download.php?"], :root a[href^="http://keep2share.cc/pr/"], :root a[href^="http://k2s.cc/pr/"], :root a[href^="http://join3.bannedsextapes.com/track/"], :root a[href^="http://green.trafficinvest.com/"], :root a[href^="http://jobitem.org/"], :root a[href^="//adbit.co/?a=Advertise&"], :root a[href^="http://istri.it/?"], :root a[href^="https://dltags.com/"], :root a[href^="http://onclickads.net/"], :root a[href^="http://www.terraclicks.com/"], :root a[href^="http://internalredirect.site/"], :root a[href^="http://cdn.adstract.com/"], :root a[href^="http://hyperlinksecure.com/go/"], :root a[href^="http://engine.newsmaxfeednetwork.com/"], :root a[href^="http://www.sex.com/pics/?utm_"], :root a[href^="http://greensmoke.com/"], :root a[href^="http://www.downloadthesefiles.com/"], :root a[href^="http://farm.plista.com/pets"], :root a[href^="http://mo8mwxi1.com/"], :root a[href^="http://go.oclaserver.com/"], :root .__y_elastic .__y_item, :root a[href^="http://go.mobisla.com/"], :root a[href^="http://go.ad2up.com/"], :root a[href^="http://games.ucoz.ru/"][target="_blank"], :root div[id^="div-gpt-ad"], :root a[href^="http://fusionads.net"], :root a[href^="http://us.marketgid.com"], :root a[href^="http://imads.integral-marketing.com/"], :root a[href^="http://freesoftwarelive.com/"], :root a[href^="http://adtrackone.eu/"], :root a[href^="http://finaljuyu.com/"], :root a[href^="http://tour.affbuzzads.com/"], :root a[href^="http://fileupnow.rocks/"], :root a[onmousedown^="this.href='http://paid.outbrain.com/network/redir?"][target="_blank"], :root a[href^="http://www.roboform.com/php/land.php"], :root a[href^="http://fileloadr.com/"], :root a[href^="http://elitefuckbook.com/"], :root div[id^="ads300_600-widget"], :root a[href^="http://web.adblade.com/"], :root a[href^="http://elite-sex-finder.com/?"], :root a[href^="http://eclkmpsa.com/"], :root a[href^="http://www.menaon.com/installs/"], :root a[href^="http://duckcash.eu/AF_"], :root a[href^="http://dethao.com/"], :root a[href^="http://www.linkbucks.com/referral/"], :root a[href^="http://ddownload39.club/"], :root a[href^="http://www.moneyducks.com/"], :root a[href^="http://data.linoleictanzaniatitanic.com/"], :root a[href^="http://data.committeemenencyclopedicrepertory.info/"], :root a[href^="https://understandsolar.com/signup/?lead_source="][href*="&tracking_code="], :root a[href^="http://hdplugin.flashplayer-updates.com/"], :root a[href^="http://data.ad.yieldmanager.net/"], :root a[href^="http://www.babylon.com/welcome/index?affID"], :root a[href^="http://www.richducks.com/"], :root a[href^="http://campaign.bharatmatrimony.com/track/"], :root #content > #center > .dose > .dosesingle, :root a[href^="http://d2.zedo.com/"], :root a[href^="http://cdn.adsrvmedia.net/"], :root a[href^="http://cpaway.afftrack.com/"], :root a[href^="http://contractallsticker.net/"], :root a[href^="http://codec.codecm.com/"], :root div[id^="ads120_600-widget"], :root a[href^="http://clk.directrev.com/"], :root a[href^="http://refer.webhostingbuzz.com/"], :root a[href^="https://paid.outbrain.com/network/redir?"], :root a[href^="http://clickserv.sitescout.com/"], :root a[href^="http://clicks.guamwnvgashbkashawhgkhahshmashcas.pw/"], :root a[href^="https://dediseedbox.com/clients/aff.php?"], :root a[href^="http://www.wantstraffic.com/"], :root .lads[width="100%"][style="background:#FFF8DD"], :root a[href^="http://databass.info/"], :root a[href^="http://www.urmediazone.com/signup"], :root a[href^="http://ads.pheedo.com/"], :root a[href^="http://click.plista.com/pets"], :root a[href^="http://download-performance.com/"], :root .__ywvr .__y_item, :root a[href^="http://track.incognitovpn.com/"], :root a[href^="http://click.guamwnvgashbkashawhgkhahshmashcas.pw/"], :root a[href^="http://rekoverr.com/"], :root [lazy-ad="lefttop_banner"], :root a[href^="http://servicegetbook.net/"], :root a[href^="http://cinema.friendscout24.de?"], :root a[href^="http://360ads.go2cloud.org/"], :root a[href^="http://dftrck.com/"], :root a[href^="http://casino-x.com/?partner"], :root a[href^="http://www.clkads.com/adServe/"], :root a[href^="http://ads.expekt.com/affiliates/"], :root a[href^="http://callville.xyz/"], :root a[href^="http://serve.williamhill.com/promoRedirect?"], :root a[href^="http://feedads.g.doubleclick.net/"], :root a[href^="http://bs.serving-sys.com/"], :root a[href^="https://trklvs.com/"], :root a[href^="http://bestorican.com/"], :root a[href^="http://www.getyourguide.com/?partner_id="], :root a[href^="http://bcp.crwdcntrl.net/"], :root a[href^="http://install.securewebsiteaccess.com/"], :root .inlineNewsletterSubscription + .inlineNewsletterSubscription div[class$="_item"], :root a[href^="http://clkmon.com/adServe/"], :root a[href^="http://www.torntvdl.com/"], :root a[href^="http://at.atwola.com/"], :root ADS-RIGHT, :root a[href^="http://affiliates.score-affiliates.com/"], :root #rhs_block .mod > .luhb-div > div[data-async-type="updateHotelBookingModule"], :root a[href^="http://affiliate.glbtracker.com/"], :root a[href^="http://www.fducks.com/"], :root .icons-rss-feed + .icons-rss-feed div[class$="_item"], :root a[href^="http://aflrm.com/"], :root a[href^="http://partner.sbaffiliates.com/"], :root a[href^="http://affiliate.coral.co.uk/processing/"], :root a[href^="http://api.content.ad/"], :root a[href^="http://zevera.com/afi.html"], :root a[href^="http://adsrv.keycaptcha.com"], :root a[data-widget-outbrain-redirect^="http://paid.outbrain.com/network/redir?"], :root a[href^="http://www.mobileandinternetadvertising.com/"], :root a[href^="http://adserving.unibet.com/"], :root a[href^="http://chaturbate.com/affiliates/"], :root a[href^="http://adserving.liveuniversenetwork.com/"], :root a[href^="http://adserver.adtechus.com/"], :root a[href^="http://buysellads.com/"], :root a[href^="http://down1oads.com/"], :root #\5f _mom_ad_12, :root a[href^="http://ads.integral-marketing.com/"], :root a[href^="http://adserver.adtech.de/"], :root a[href^="http://ads.betfair.com/redirect.aspx?"], :root a[href^="http://ads.affbuzzads.com/"], :root a[href^="http://online.ladbrokes.com/promoRedirect?"], :root a[href^="http://ads.ad-center.com/"], :root a[href^="http://adrunnr.com/"], :root a[href^="https://www.dsct1.com/"], :root a[href^="http://amzn.to/"] > img[src^="data"], :root a[href^="http://www.liversely.net/"], :root a[href^="http://admingame.info/"], :root div[id^="q1-adset-"], :root a[href^="http://adfarm.mediaplex.com/"], :root #center_col > #taw > #tvcap > .rscontainer, :root a[href^="http://adf.ly/?id="], :root a[href^="http://goldmoney.com/?gmrefcode="], :root a[href^="http://adexprt.me/"], :root a[href^="http://www.flashx.tv/downloadthis"], :root a[href^="http://affiliates.pinnaclesports.com/processing/"], :root a[href^="http://ad.yieldmanager.com/"], :root a[href^="http://ad.doubleclick.net/"], :root #resultspanel > #topads, :root a[href^="http://www.drowle.com/"], :root a[href^="http://abc2.mobile-10.com/"], :root input[onclick^="window.open('http://www.friendlyduck.com/AF_"], :root a[href^="http://srvpub.com/"], :root a[href^="http://a.adquantix.com/"], :root a[href^="http://NowDownloadAll.com"], :root a[href^="http://www.ducksnetwork.com/"], :root a[href^="http://3wr110.net/"], :root a[href^="//ads.ad-center.com/"], :root a[href^="http://1phads.com/"], :root #center_col > #resultStats + div[style="border:1px solid #dedede;margin-bottom:11px;padding:5px 7px 5px 6px"], :root a[href^="https://www.secureupload.eu/suprerefid="], :root a[href^="http://yads.zedo.com/"], :root #mbEnd[cellspacing="0"][cellpadding="0"], :root a[href^="http://adclick.g.doubleclick.net/"], :root a[href^="//t.MtagMonetizationA.com/"], :root #\5f _mom_ad_2, :root a[href^="http://ads.activtrades.com/"], :root a[href^="//api.ad-goi.com/"], :root a[href^="http://www.clickansave.net/"], :root a[href^="http://get.slickvpn.com/"], :root [onclick*="content.ad/"], :root a[href^="http://galleries.securewebsiteaccess.com/"], :root a[href^=" http://n47adshostnet.com/"], :root a[href^="http://linksnappy.com/?ref="], :root #main_col > #center_col div[style="font-size:14px;margin:0 4px;padding:1px 5px;background:#fff7ed"], :root a[href^="http://adtrack123.pl/"], :root .section-result[data-result-ad-type], :root script[src^="http://free-shoutbox.net/app/webroot/shoutbox/sb.php?shoutbox="] + #freeshoutbox_content, :root a[href^=" http://ads.ad-center.com/"], :root .GPMV2XEDA2 > .GPMV2XEDP1 > .GPMV2XEDJBB, :root a[href*="onclkds."], :root a[href^="http://www.idownloadplay.com/"], :root a[href^="//srv.buysellads.com/"], :root a[href^="http://www.xmediaserve.com/"], :root a[href^="http://www.sex.com/videos/?utm_"], :root div[itemtype="http://www.schema.org/WPAdBlock"], :root .__zinit .__y_item, :root .ch[onclick="ga(this,event)"], :root a[href^="https://ad.doubleclick.net/"], :root a[href*="letsadvertisetogether.com"], :root a[href^="http://fsoft4down.com/"], :root a[href*="ad2upapp.com/"], :root .ob_container a[data-redirect^="http://paid.outbrain.com/network/redir?"], :root #mn #center_col > div > h2.spon:first-child, :root a[href*="=Adtracker"], :root a[href^="https://www.popads.net/users/"], :root a[href^="http://tracking.crazylead.com/"], :root a[href*="/cmd.php?ad="], :root a[href^="http://www.myfreepaysite.com/sfw_int.php?aid"], :root a[href^="http://galleries.pinballpublishernetwork.com/"], :root .ob_dual_right > .ob_ads_header ~ .odb_div, :root a[href*=".adk2x.com/"], :root a[href^="http://api.ringtonematcher.com/"], :root a[data-url^="http://paid.outbrain.com/network/redir?"] + .author, :root a[href^="http://www.twinplan.com/AF_"], :root a[href^="http://n.admagnet.net/"], :root a[href^="http://connectlinking6.com/"], :root a[data-obtrack^="http://paid.outbrain.com/network/redir?"], :root a[href^="http://www.duckcash.eu/AF_"], :root a[href^="http://bc.vc/?r="], :root a[href^="//www.mgid.com/"], :root a[href^="http://www.pinkvisualgames.com/?revid="], :root .__y_inner > .__y_item, :root .jobs-information-call-to-action + .jobs-information-call-to-action div[class$="_item"], :root AMP-AD, :root .widget-pane-section-result[data-result-ad-type], :root #center_col > #main > .dfrd > .mnr-c > .c._oc._zs, :root .trc_rbox_div .syndicatedItemUB, :root .ob_container .item-container-obpd, :root a[href^="http://centertrust.xyz/"], :root .trc_rbox_div .syndicatedItem, :root a[target="_blank"][onmousedown="this.href^='http://paid.outbrain.com/network/redir?"], :root #tads + div + .c, :root a[href^="http://www.accuserveadsystem.com/accuserve-go.php?"], :root a[href^="http://c.ketads.com/"], :root .trc_rbox .syndicatedItem, :root a[href^="http://pwrads.net/"], :root a[href*="friendlyduck.com"], :root #mn div[style="position:relative"] > #center_col > div > ._dPg, :root .rhsvw[style="background-color:#fff;margin:0 0 14px;padding-bottom:1px;padding-top:1px;"], :root a[data-url^="http://paid.outbrain.com/network/redir?"], :root a[href^="http://www.fbooksluts.com/"], :root a[href^="http://c.actiondesk.com/"], :root .ra[align="right"][width="30%"], :root a[href^="https://trackjs.com/?utm_source"], :root AFS-AD, :root .ra[align="left"][width="30%"], :root .plista_widget_belowArticleRelaunch_item[data-type="pet"], :root #main-content > [style="padding:10px 0 0 0 !important;"], :root a[href^="http://www.webtrackerplus.com/"], :root .GJJKPX2N1 > .GJJKPX2M1 > .GJJKPX2P4, :root a[href^="http://ad.au.doubleclick.net/"], :root a[href^="http://record.sportsbetaffiliates.com.au/"], :root #topstuff > #tads, :root a[href^="http://www.1clickmoviedownloader.info/"], :root .mw > #rcnt > #center_col > #taw > #tvcap > .c, :root a[href^="http://affiliate.godaddy.com/"], :root a[href^="http://www.sex.com/?utm_"], :root #mn #center_col > div > h2.spon:first-child + ol:last-child, :root a[onmousedown^="this.href='https://paid.outbrain.com/network/redir?"][target="_blank"], :root a[href^="http://www.downloadweb.org/"], :root .plistaList > .plista_widget_underArticle_item[data-type="pet"], :root #center_col > #res > #topstuff + #search > div > #ires > #rso > #flun, :root a[href^="http://adultfriendfinder.com/p/register.cgi?pid="], :root a[href^="http://www.yourfuckbook.com/?"], :root a[href^="http://ads.sprintrade.com/"], :root .GHOFUQ5BG2 > .GHOFUQ5BF2 > .GHOFUQ5BG5, :root a[href^="http://ad-apac.doubleclick.net/"], :root .gbfwa > div[class$="_item"], :root a[href^="http://prochina.space/"], :root a[href^="http://www.uniblue.com/cm/"], :root a[data-redirect^="http://click.plista.com/pets"], :root #rhs_block > script + .c._oc._Ve.rhsvw, :root .rscontainer > .ellip, :root #MAIN.ShowTopic > .ad, :root a[href^="http://findersocket.com/"], :root a[href^="http://cdn3.adexprts.com/"], :root a[data-redirect^="this.href='http://paid.outbrain.com/network/redir?"], :root a[href^="http://stateresolver.link/"], :root .__ywl .__y_item, :root a[href^="http://www.myfreepaysite.com/sfw.php?aid"], :root a[href^="http://www.ireel.com/signup?ref"], :root #center_col > #resultStats + #tads, :root .__yinit .__y_item, :root [ad-id^="googlead"], :root a[href^="http://adlev.neodatagroup.com/"], :root a[href^="http://server.cpmstar.com/click.aspx?poolid="], :root #cnt #center_col > #res > #topstuff > .ts, :root iframe[id^="google_ads_frame"], :root a[href^="http://www.dealcent.com/register.php?affid="], :root #cnt #center_col > #taw > #tvcap > .c._oc._Lp, :root .trc_rbox_div a[target="_blank"][href^="http://tab"], :root .GKJYXHBF2 > .GKJYXHBE2 > .GKJYXHBH5, :root #rhs_block .mod > .gws-local-hotels__booking-module, :root a[href^="http://banners.victor.com/processing/"], :root a[href*="googleme.eu"], :root .mod > ._jH + .rscontainer, :root .GFYY1SVD2 > .GFYY1SVC2 > .GFYY1SVF5, :root #rhswrapper > #rhssection[border="0"][bgcolor="#ffffff"], :root .Mpopup + #Mad > #MadZone, :root a[href^="http://www.TwinPlan.com/AF_"], :root a[href^="http://landingpagegenius.com/"], :root a[href^="http://www.streamtunerhd.com/signup?"], :root #ssmiwdiv[jsdisplay], :root #center_col > div[style="font-size:14px;margin-right:0;min-height:5px"] > div[style="font-size:14px;margin:0 4px;padding:1px 5px;background:#fff8e7"], :root a[href^="http://paid.outbrain.com/network/redir?"], :root #ads > .dose > .dosesingle, :root a[href^="http://easydownload4you.com/"], :root #rhs_block > #mbEnd, :root #center_col > #\5f Emc, :root a[href^="http://papi.mynativeplatform.com:80/pub2/"], :root div[id^="dfp-ad-"], :root .GB3L-QEDGY .GB3L-QEDF- > .GB3L-QEDE-, :root .rc-cta[data-target], :root a[href^="http://hd-plugins.com/download/"], :root #rhs_block > .ts[cellspacing="0"][cellpadding="0"][style="padding:0"], :root .GFYY1SVE2 > .GFYY1SVD2 > .GFYY1SVG5, :root #flowplayer > div[style="position: absolute; width: 300px; height: 275px; left: 222.5px; top: 85px; z-index: 999;"], :root a[href^="http://www.pinkvisualpad.com/?revid="], :root a[href^="http://www.greenmangaming.com/?tap_a="], :root a[href^="http://www.bet365.com/home/?affiliate"], :root #center_col > #resultStats + div + #res + #tads, :root .nrelate .nr_partner, :root a[href^="http://bonusfapturbo.nmvsite.com/"], :root a[href^="http://www.sexgangsters.com/?pid="], :root a[href^="http://www.amazon.co.uk/exec/obidos/external-search?"], :root #mn div[style="position:relative"] > #center_col > ._Ak, :root a[href^="http://www.adxpansion.com"], :root div[id^="dfp-slot-"], :root .l-container > #fishtank, :root a[href*="/adrotate-out.php?"], :root a[href^="http://wgpartner.com/"], :root #center_col > #resultStats + #tads + #res + #tads, :root a[href^="http://campaign.bharatmatrimony.com/cbstrack/"], :root .trc_related_container div[data-item-syndicated="true"], :root a[href^="http://t.mdn2015x1.com/"], :root .trc_rbox_border_elm .syndicatedItem, :root a[href^="http://dwn.pushtraffic.net/"], :root a[href$="/vghd.shtml"], :root #rhs_block > ol > .rhsvw > .kp-blk > .xpdopen > ._OKe > ol > ._DJe > .luhb-div, :root a[href^="http://ad-emea.doubleclick.net/"], :root a[href^="http://www.cash-duck.com/AF_"], :root p[id^="div-gpt-ad-"], :root #assetsListings[style="display: block;"], :root #content > #right > .dose > .dosesingle, :root #header + #content > #left > #rlblock_left, :root a[href*="emprestimo.eu"] { display: none !important; }</style></head>
+
+
+  <body>
+
+    <div class="page-content">
+      <div class="wrapper">
+        <h1 id="data-manipulation-with-tidyr-and-dplyr">Data manipulation with tidyr and dplyr</h1>
+
+<p>Instructor: Philippe Marchand</p>
+
+<h2 id="table-of-contents">Table of contents</h2>
+
+<ul>
+  <li><a href="#sample-data">Sample data</a></li>
+  <li><a href="#tidy-data-concept">Tidy data concept</a></li>
+  <li><a href="#reshaping-multiple-columns-into-categoryvalue-pairs">Reshaping multiple columns into category/value
+pairs</a></li>
+  <li><a href="#key-functions-in-dplyr">Key functions in dplyr</a></li>
+  <li><a href="#subsetting-and-sorting">Subsetting and sorting</a></li>
+  <li><a href="#grouping-and-aggregation">Grouping and aggregation</a></li>
+  <li><a href="#transformation-of-variables">Transformation of variables</a></li>
+  <li><a href="#joining-data-frames">Joining data frames</a></li>
+  <li><a href="#chaining-operations-with-pipes">Chaining operations with
+pipes (%&gt;%)</a></li>
+  <li><a href="#bonus-database-queries-with-dplyr">Bonus: Database queries with dplyr</a></li>
+  <li><a href="#additional-information">Additional information</a></li>
+  <li><a href="#exercise-solutions">Exercise solutions</a></li>
+</ul>
+
+<p>Data frames generally occupy a central place in R analysis workflows. While the base R functions provide most necessary tools to subset, reformat and transform data frames, the specialized packages we will use in this lesson – <strong>tidyr</strong> and <strong>dplyr</strong> – offer a more succinct and often computationally faster way to perform the common data frame processing steps. Beyond saving typing time, the simpler syntax also makes scripts more readable and easier to debug.</p>
+
+<p>We will first discuss what is a <em>tidy</em> dataset and how to convert data to this standard form with tidyr. Next, we will explore the data processing functions in dplyr, which work particularly well with the tidy data format. The key functions from that package all have close counterparts in SQL (Structured Query Language), which provides the added bonus of facilitating the transition from R to relational databases.</p>
+
+<h2 id="sample-data">Sample data</h2>
+
+<p>We will use the <a href="http://github.com/weecology/portal-teachingdb">Portal teaching database</a>, a simplified dataset derived from a long-term study of animal populations in the Chihuahuan Desert. The teaching dataset includes three tables: two contain summary information on the study plots and observed species, respectively, while the third and largest one (surveys) lists all individual observations, with columns linking to the appropriate species and plot IDs.</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><!--span class="n">setwd</span><span class="p">(</span><span class="s2">"%sandbox%"</span><span class="p">)</span--><span class="n">library</span><span class="p">(</span><span class="s2">"tidyverse"</span><span class="p">)</span>
+<!--span class="n">plots</span> <span class="o">&lt;-</span> <span class="n">read.csv</span><span class="p">(</span><span class="s2">"data/plots.csv"</span><span class="p">)</span-->
+<span class="n">plots</span> <span class="o">&lt;-</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">"https://raw.githubusercontent.com/weecology/portal-teachingdb/master/plots.csv"</span><span class="p">)</span>
+<!--span class="n">species</span> <span class="o">&lt;-</span> <span class="n">read.csv</span><span class="p">(</span><span class="s2">"data/species.csv"</span><span class="p">)</span-->
+<span class="n">species</span> <span class="o">&lt;-</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">"https://raw.githubusercontent.com/weecology/portal-teachingdb/master/species.csv"</span><span class="p">)</span>
+<!--span class="n">surveys</span> <span class="o">&lt;-</span> <span class="n">read.csv</span><span class="p">(</span><span class="s2">"data/surveys.csv"</span><span class="p">,</span> <span class="n">na.strings</span> <span class="o">=</span> <span class="s2">""</span><span class="p">)</span-->
+<span class="n">surveys</span> <span class="o">&lt;-</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">"https://raw.githubusercontent.com/weecology/portal-teachingdb/master/surveys.csv"</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h2 id="tidy-data-concept">Tidy data concept</h2>
+
+<p>R developer Hadley Wickham (author of the tidyr, dplyr and ggplot packages, among others) defines tidy datasets as those where:</p>
+
+<ul>
+  <li>each variable forms a column;</li>
+  <li>each observation forms a row; and</li>
+  <li>each type of observational unit forms a table. (<a href="http://www.jstatsoft.org/v59/i10/paper">Wickham 2014</a>)</li>
+</ul>
+
+<p>These guidelines may be familiar to some of you, as they closely map to best practices in database design. The three tables in our sample data are already in a tidy format. Let’s consider a different example where the counts of three species are recorded for each day in a week:</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">counts_df</span> <span class="o">&lt;-</span> <span class="n">data.frame</span><span class="p">(</span>
+  <span class="n">day</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">"Monday"</span><span class="p">,</span> <span class="s2">"Tuesday"</span><span class="p">,</span> <span class="s2">"Wednesday"</span><span class="p">),</span>
+  <span class="n">wolf</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">3</span><span class="p">),</span>
+  <span class="n">hare</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="m">20</span><span class="p">,</span> <span class="m">25</span><span class="p">,</span> <span class="m">30</span><span class="p">),</span>
+  <span class="n">fox</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">counts_df</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>        day wolf hare fox
+1    Monday    2   20   4
+2   Tuesday    1   25   4
+3 Wednesday    3   30   4
+</code></pre>
+</div>
+
+<p><strong>Question</strong>: How to structure this data in a tidy format as defined above?</p>
+
+<p><strong>Answer</strong>: <em>counts_df</em> currently has three columns (<em>wolf</em>, <em>hare</em> and <em>fox</em>) representing the same variable (a count). Since each reported observation is the count of individuals from a given species on a given day: the tidy format should have three columns: <em>day</em>, <em>species</em> and <em>count</em>.</p>
+
+<p>To put it another way, if your analysis requires grouping observations based on some characteristic (e.g. draw a graph of the counts over time with a different color for each species), then this characteristic should be recorded as different levels of a categorical variable (species) rather than spread across different variables/columns.</p>
+
+<p>While the tidy format is optimal for many common data frame operations in R (aggregation, plotting, fitting statistical models), it is not the optimal structure for every case. As an example, community ecology analyses often start from a matrix of counts where rows and columns correspond to species and sites.</p>
+
+<h2 id="reshaping-multiple-columns-into-categoryvalue-pairs">Reshaping multiple columns into category/value pairs</h2>
+
+<p>Let’s load the <strong>tidyr</strong> package and use its <code class="highlighter-rouge">gather</code> function to reshape <em>counts_df</em> into a tidy format:</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">tidyr</span><span class="p">)</span>
+<span class="n">counts_gather</span> <span class="o">&lt;-</span> <span class="n">gather</span><span class="p">(</span><span class="n">counts_df</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="s2">"species"</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="s2">"count"</span><span class="p">,</span> <span class="n">wolf</span><span class="o">:</span><span class="n">fox</span><span class="p">)</span>
+<span class="n">counts_gather</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>        day species count
+1    Monday    wolf     2
+2   Tuesday    wolf     1
+3 Wednesday    wolf     3
+4    Monday    hare    20
+5   Tuesday    hare    25
+6 Wednesday    hare    30
+7    Monday     fox     4
+8   Tuesday     fox     4
+9 Wednesday     fox     4
+</code></pre>
+</div>
+
+<p>Here, <code class="highlighter-rouge">gather</code> takes all columns between <code class="highlighter-rouge">wolf</code> and <code class="highlighter-rouge">fox</code> and reshapes them into two columns, the names of which are specified as the key and value. For each row, the key column in the new dataset indicates the column that contained that value in the original dataset.</p>
+
+<p>Some notes on the syntax: From a workflow perspective, a big advantage of tidyr and dplyr is that each function takes a data frame as its first parameter and returns the transformed data frame. As we will see later, it makes it very easy to apply these functions in a chain. All functions also let us use column names as variables without having to prefix them with the name of the data frame (i.e. <code class="highlighter-rouge">wolf</code> instead of <code class="highlighter-rouge">counts_df$wolf</code>).</p>
+
+<p>If your analysis requires a “wide” data format rather than the tall format produced by <code class="highlighter-rouge">gather</code>, you can use the opposite operation, named <code class="highlighter-rouge">spread</code>. Run the code below and verify that it restores the original form of <em>counts_df</em>:</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">counts_spread</span> <span class="o">&lt;-</span> <span class="n">spread</span><span class="p">(</span><span class="n">counts_gather</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">species</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">count</span><span class="p">)</span>
+<span class="n">counts_spread</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>        day fox hare wolf
+1    Monday   4   20    2
+2   Tuesday   4   25    1
+3 Wednesday   4   30    3
+</code></pre>
+</div>
+<p>Why are <code class="highlighter-rouge">species</code> and <code class="highlighter-rouge">count</code> not quoted here? (They refer to existing column names.)</p>
+
+<h3 id="exercise-1">Exercise 1</h3>
+
+<p>Try removing a row from <code class="highlighter-rouge">counts_gather</code> (e.g. <code class="highlighter-rouge">counts_gather &lt;- counts_gather[-8, ]</code>). How does that affect the outcome of <code class="highlighter-rouge">spread</code>? Let’s say the missing row means that no individual of that species was recorded on that day. How can you reflect that assumption in the outcome of <code class="highlighter-rouge">spread</code>? (Hint: Look at the help file for that function.)</p>
+
+<p><a href="https://sesync-ci.github.io/data-manipulation-in-R-lesson/2016/07/26/#solution-1">View solution</a></p>
+
+<h2 id="key-functions-in-dplyr">Key functions in dplyr</h2>
+
+<p>The table below presents the most commonly used functions in <strong>dplyr</strong>, which we will demonstrate in turn, starting from the <em>surveys</em> data frame.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Function</th>
+      <th>Returns</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>filter(<em>data</em>, <em>conditions</em>)</td>
+      <td>rows from <em>data</em> where <em>conditions</em> hold</td>
+    </tr>
+    <tr>
+      <td>select(<em>data</em>, <em>variables</em>)</td>
+      <td>a subset of the columns in <em>data</em>, as specified in <em>variables</em></td>
+    </tr>
+    <tr>
+      <td>arrange(<em>data</em>, <em>variables</em>)</td>
+      <td><em>data</em> sorted by <em>variables</em></td>
+    </tr>
+    <tr>
+      <td>group_by(<em>data</em>, <em>variables</em>)</td>
+      <td>a copy of <em>data</em>, with groups defined by <em>variables</em></td>
+    </tr>
+    <tr>
+      <td>summarize(<em>data</em>, <em>newvar</em> = <em>function</em>)</td>
+      <td>a data frame with <em>newvar</em> columns that summarize <em>data</em> (or each group in <em>data</em>) based on an aggregation <em>function</em></td>
+    </tr>
+    <tr>
+      <td>mutate(<em>data</em>, <em>newvar</em> = <em>function</em>)</td>
+      <td>a data frame with <em>newvar</em> columns defined by a <em>function</em> of existing columns</td>
+    </tr>
+    <tr>
+      <td>join(<em>data1</em>, <em>data2</em>, <em>variables</em>)</td>
+      <td>a data frame that joins columns from <em>data1</em> and <em>data2</em> based on matching values of <em>variables</em></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><em>Note</em>: There are in fact multiple join functions (<code class="highlighter-rouge">inner_join</code>, <code class="highlighter-rouge">left_join</code>, <code class="highlighter-rouge">full_join</code>) that differ in how they handle rows without a match in the other data frame.</p>
+
+<h2 id="subsetting-and-sorting">Subsetting and sorting</h2>
+
+<p>After loading dplyr, we begin our analysis by extracting the survey observations for the first three months of 1990 with <code class="highlighter-rouge">filter</code>:</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
+<span class="n">surveys1990_winter</span> <span class="o">&lt;-</span> <span class="n">filter</span><span class="p">(</span><span class="n">surveys</span><span class="p">,</span> <span class="n">year</span> <span class="o">==</span> <span class="m">1990</span><span class="p">,</span> <span class="n">month</span> <span class="o">%</span><span class="k">in</span><span class="o">%</span> <span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Note that a logical “and” is implied when conditions are separated by commas. (This is perhaps the main way in which <code class="highlighter-rouge">filter</code> differs from the base R <code class="highlighter-rouge">subset</code> function.) Therefore, the example above is equivalent to <code class="highlighter-rouge">filter(surveys, year == 1990 &amp; month %in% 1:3)</code>. A logical “or” must be specified explicitly with the <code class="highlighter-rouge">|</code> operator.</p>
+
+<p>To subset the columns (rather than the rows) of a data frame, we would call <code class="highlighter-rouge">select</code> with the name of the variables to retain, e.g. <code class="highlighter-rouge">select(df, name, address)</code> returns a new data frame containing the <em>name</em> and <em>address</em> columns from <em>df</em>. Alternatively, we can <em>exclude</em> a column by preceding its name with a minus sign. We use this option here to remove the redundant year column from <em>surveys_1990_winter</em>:</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">surveys1990_winter</span> <span class="o">&lt;-</span> <span class="n">select</span><span class="p">(</span><span class="n">surveys1990_winter</span><span class="p">,</span> <span class="o">-</span><span class="n">year</span><span class="p">)</span>
+<span class="n">head</span><span class="p">(</span><span class="n">surveys1990_winter</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>  record_id month day plot_id species_id sex hindfoot_length weight
+1     16879     1   6       1         DM   F              37     35
+2     16880     1   6       1         OL   M              21     28
+3     16881     1   6       6         PF   M              16      7
+4     16882     1   6      23         RM   F              17      9
+5     16883     1   6      12         RM   M              17     10
+6     16884     1   6      24         RM   M              17      9
+</code></pre>
+</div>
+
+<p>To complete this section, we sort the 1990 winter surveys data by descending order of species name, then by ascending order of weight. For comparison purposes, I include both the dplyr code (<code class="highlighter-rouge">arrange</code> function) and the base R code performing the same operation. Note that <code class="highlighter-rouge">arrange</code> assumes ascending order unless the variable name is enclosed by <code class="highlighter-rouge">desc()</code>.</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">sorted1</span> <span class="o">&lt;-</span> <span class="n">arrange</span><span class="p">(</span><span class="n">surveys1990_winter</span><span class="p">,</span> <span class="n">desc</span><span class="p">(</span><span class="n">species_id</span><span class="p">),</span> <span class="n">weight</span><span class="p">)</span>
+<span class="n">sorted2</span> <span class="o">&lt;-</span> <span class="n">surveys1990_winter</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="o">-</span><span class="n">xtfrm</span><span class="p">(</span><span class="n">surveys1990_winter</span><span class="o">$</span><span class="n">species_id</span><span class="p">),</span> <span class="n">surveys1990_winter</span><span class="o">$</span><span class="n">weight</span><span class="p">),</span> <span class="p">]</span>
+<span class="n">head</span><span class="p">(</span><span class="n">sorted1</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>  record_id month day plot_id species_id sex hindfoot_length weight
+1     16929     1   7       3         SH   M              31     61
+2     17172     2  25       3         SH   F              29     67
+3     17327     3  30       2         SH   M              30     69
+4     16886     1   6      24         SH   F              30     73
+5     17359     3  30       3         SH   F              31     77
+6     17170     2  25       3         SH   M              30     80
+</code></pre>
+</div>
+
+<h3 id="exercise-2">Exercise 2</h3>
+
+<p>Write code that returns the <em>record_id</em>, <em>sex</em> and <em>weight</em> of all surveyed individuals of <em>Reithrodontomys montanus</em> (RO).</p>
+
+<p><a href="https://sesync-ci.github.io/data-manipulation-in-R-lesson/2016/07/26/#solution-2">View solution</a></p>
+
+<h2 id="grouping-and-aggregation">Grouping and aggregation</h2>
+
+<p>Another common type of operation on tabular data involves the aggregation of records according to specific grouping variables. In particular, let’s say we want to count the number of individuals by species observed in the winter of 1990. We first define a grouping of our <em>surveys1990_winter</em> data frame with <code class="highlighter-rouge">group_by</code>, then call <code class="highlighter-rouge">summarize</code> to aggregate values in each group using a given function (here, the built-in function <code class="highlighter-rouge">n()</code> to count the rows).</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">surveys1990_winter</span> <span class="o">&lt;-</span> <span class="n">group_by</span><span class="p">(</span><span class="n">surveys1990_winter</span><span class="p">,</span> <span class="n">species_id</span><span class="p">)</span>
+<span class="n">counts_1990w</span> <span class="o">&lt;-</span> <span class="n">summarize</span><span class="p">(</span><span class="n">surveys1990_winter</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">n</span><span class="p">())</span>
+<span class="n">head</span><span class="p">(</span><span class="n">counts_1990w</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>Source: local data frame [6 x 2]
+
+  species_id count
+      (fctr) (int)
+1         AB    25
+2         AH     4
+3         BA     3
+4         DM   132
+5         DO    65
+6         DS     6
+</code></pre>
+</div>
+
+<p>A few notes on these functions:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">group_by</code> makes no changes to the data frame values, but it adds metadata – in the form of R <em>attributes</em> – to identify groups. You can see those attributes either by running the <code class="highlighter-rouge">str()</code> function on the data frame or by inspecting it in the RStudio <em>Environment</em> pane.</li>
+  <li>You can add multiple variables (separated by commas) in <code class="highlighter-rouge">group_by</code>; each distinct combination of values across these columns defines a different group. You can also define more than one summary variable in a single call to <code class="highlighter-rouge">summarize</code>.</li>
+</ul>
+
+<h3 id="exercise-3">Exercise 3</h3>
+
+<p>Write code that returns the average weight and hindfoot length of <em>Dipodomys merriami</em> (DM) individuals observed in each month (irrespective of the year). Make sure to exclude <em>NA</em> values.</p>
+
+<p><a href="https://sesync-ci.github.io/data-manipulation-in-R-lesson/2016/07/26/#solution-3">View solution</a></p>
+
+<h2 id="transformation-of-variables">Transformation of variables</h2>
+
+<p>The <code class="highlighter-rouge">mutate</code> function creates new columns by performing the same operation on each row. Here, we use the previously obtained <em>count</em> variable to derive the proportion of individuals represented by each species, and assign the result to a new <em>prop</em> column.</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">counts_1990w</span> <span class="o">&lt;-</span> <span class="n">mutate</span><span class="p">(</span><span class="n">counts_1990w</span><span class="p">,</span> <span class="n">prop</span> <span class="o">=</span> <span class="n">count</span> <span class="o">/</span> <span class="n">sum</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
+<span class="n">head</span><span class="p">(</span><span class="n">counts_1990w</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>Source: local data frame [6 x 3]
+
+  species_id count       prop
+      (fctr) (int)      (dbl)
+1         AB    25 0.05091650
+2         AH     4 0.00814664
+3         BA     3 0.00610998
+4         DM   132 0.26883910
+5         DO    65 0.13238289
+6         DS     6 0.01221996
+</code></pre>
+</div>
+
+<p>Notes:</p>
+
+<ul>
+  <li>With <code class="highlighter-rouge">mutate</code>, you can assign the result of an expression to an existing column name to overwrite that column.</li>
+  <li>As we will see below, <code class="highlighter-rouge">mutate</code> also works with groups. The key difference between <code class="highlighter-rouge">mutate</code> and <code class="highlighter-rouge">summarize</code> is that the former always returns a data frame with the same number of rows, while the latter reduces the number of rows.</li>
+  <li>For a concise way to apply the same transformation to multiple columns, check the <code class="highlighter-rouge">mutate_each</code> function. There is also a <code class="highlighter-rouge">summarize_each</code> function to perform the same aggregation operation on multiple columns.</li>
+</ul>
+
+<h2 id="joining-data-frames">Joining data frames</h2>
+
+<p>Inspired by relational databases, the join functions combine information in two data frames based on matching the values of variables they share. We use this feature to add information (from the <em>species</em> data frame) pertaining to each species listed in the <em>counts_1990w</em> data.</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">counts_1990w_join</span> <span class="o">&lt;-</span> <span class="n">inner_join</span><span class="p">(</span><span class="n">counts_1990w</span><span class="p">,</span> <span class="n">species</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>Joining by: "species_id"
+
+Warning in inner_join_impl(x, y, by$x, by$y): joining factors with
+different levels, coercing to character vector
+</code></pre>
+</div>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">head</span><span class="p">(</span><span class="n">counts_1990w_join</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>Source: local data frame [6 x 6]
+
+  species_id count       prop            genus     species   taxa
+       (chr) (int)      (dbl)           (fctr)      (fctr) (fctr)
+1         AB    25 0.05091650       Amphispiza   bilineata   Bird
+2         AH     4 0.00814664 Ammospermophilus     harrisi Rodent
+3         BA     3 0.00610998          Baiomys     taylori Rodent
+4         DM   132 0.26883910        Dipodomys    merriami Rodent
+5         DO    65 0.13238289        Dipodomys       ordii Rodent
+6         DS     6 0.01221996        Dipodomys spectabilis Rodent
+</code></pre>
+</div>
+
+<p>The messages output by R point to two useful features of <code class="highlighter-rouge">inner_join</code>: it automatically joins the tables based on shared column names (here, <em>species_id</em>) and it converts factors to characters when their levels don’t match.</p>
+
+<p>It is sometimes useful to manually specify the columns that should be joined, i.e. when corresponding columns don’t share the same name, or columns of the same name shouldn’t be matched. This can be done with the <code class="highlighter-rouge">by</code> argument, e.g. if column <code class="highlighter-rouge">id</code> in <em>A</em> matches column <code class="highlighter-rouge">A_id</code> in <em>B</em>, you would write:</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">inner_join</span><span class="p">(</span><span class="n">tableA</span><span class="p">,</span> <span class="n">tableB</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">"id"</span> <span class="o">=</span> <span class="s2">"A_id"</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>By inspecting the <em>counts_1990w_join</em> data frame, you may notice that the last row of <em>counts_1990w</em> (where the <em>species_id</em> was <em>NA</em>) was excluded. An <code class="highlighter-rouge">inner_join</code> only keeps rows for which a match was found in the other table. To keep all rows from the first table, use <code class="highlighter-rouge">left_join</code> instead.</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">counts_1990w_join</span> <span class="o">&lt;-</span> <span class="n">left_join</span><span class="p">(</span><span class="n">counts_1990w</span><span class="p">,</span> <span class="n">species</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="exercise-4">Exercise 4</h3>
+
+<p>We often use <code class="highlighter-rouge">group_by</code> along with <code class="highlighter-rouge">summarize</code>, but you can also apply <code class="highlighter-rouge">filter</code> and <code class="highlighter-rouge">mutate</code> operations on groups. Try it out and answer one or both of the following queries:</p>
+
+<ul>
+  <li>Return only the rows in <em>counts_1990w_join</em> that correspond to the most common species in each genus.</li>
+  <li>Calculate the fraction of total counts by taxa (birds or rodents) represented by each species within that taxon.</li>
+</ul>
+
+<p><a href="https://sesync-ci.github.io/data-manipulation-in-R-lesson/2016/07/26/#solution-4">View solution</a></p>
+
+<h2 id="chaining-operations-with-pipes-">Chaining operations with pipes (%&gt;%)</h2>
+
+<p>We have seen that dplyr functions all take a data frame as their first argument and return a transformed data frame. This consistent syntax has the added benefit of making these functions compatible the “pipe” operator (<code class="highlighter-rouge">%&gt;%</code>). This operator actually comes from another R package, <strong>magrittr</strong>, which is loaded with dplyr by default. What <code class="highlighter-rouge">%&gt;%</code> does is to take the expression on its left-hand side and pass it as the first argument to the function on its right-hand side. Here is a simple example:</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="n">NA</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="n">sum</span><span class="p">(</span><span class="n">na.rm</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span>   <span class="c1"># same as sum(c(1,3,5,NA), na.rm = TRUE)
+</span></code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>[1] 9
+</code></pre>
+</div>
+
+<p>This particular syntax may appear strange in the example above. The pipe operator’s main utility is to condense a chain of operations applied to the same piece of data, when you don’t need to save the intermediate results. To illustrate this, the code below reproduces all the steps that led to the <em>counts_1990w_join</em> data frame.</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">new_counts</span> <span class="o">&lt;-</span> <span class="n">surveys</span> <span class="o">%&gt;%</span>
+    <span class="n">filter</span><span class="p">(</span><span class="n">year</span> <span class="o">==</span> <span class="m">1990</span><span class="p">,</span> <span class="n">month</span> <span class="o">%</span><span class="k">in</span><span class="o">%</span> <span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+    <span class="n">select</span><span class="p">(</span><span class="o">-</span><span class="n">year</span><span class="p">)</span> <span class="o">%&gt;%</span>
+    <span class="n">group_by</span><span class="p">(</span><span class="n">species_id</span><span class="p">)</span> <span class="o">%&gt;%</span>
+    <span class="n">summarize</span><span class="p">(</span><span class="n">count</span> <span class="o">=</span> <span class="n">n</span><span class="p">())</span> <span class="o">%&gt;%</span>
+    <span class="n">mutate</span><span class="p">(</span><span class="n">prop</span> <span class="o">=</span> <span class="n">count</span> <span class="o">/</span> <span class="n">sum</span><span class="p">(</span><span class="n">count</span><span class="p">))</span> <span class="o">%&gt;%</span>
+    <span class="n">inner_join</span><span class="p">(</span><span class="n">species</span><span class="p">)</span>
+
+<span class="n">identical</span><span class="p">(</span><span class="n">new_counts</span><span class="p">,</span> <span class="n">counts_1990w_join</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>[1] TRUE
+</code></pre>
+</div>
+
+<h2 id="bonus-databases-queries-with-dplyr">Bonus: Databases queries with dplyr</h2>
+
+<p>Another big advantage of dplyr is that you can query tables from a SQL database using the exact same syntax as for data frames. Here we connect to the <em>portal</em> database in PostgreSQL with the <code class="highlighter-rouge">src_postgres</code> function, then use <code class="highlighter-rouge">tbl</code> to assign a variable to the <em>surveys</em> table (without loading it in memory).</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">portal_db</span> <span class="o">&lt;-</span> <span class="n">src_postgres</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s2">"pgstudio.research.sesync.org"</span><span class="p">,</span>
+                          <span class="n">dbname</span> <span class="o">=</span> <span class="s2">"portal"</span><span class="p">,</span> <span class="n">user</span> <span class="o">=</span> <span class="s2">"student"</span><span class="p">,</span> 
+                          <span class="n">password</span> <span class="o">=</span> <span class="s2">"%password%"</span><span class="p">)</span>
+<span class="n">surveys_sql</span> <span class="o">&lt;-</span> <span class="n">tbl</span><span class="p">(</span><span class="n">portal_db</span><span class="p">,</span> <span class="s2">"surveys"</span><span class="p">)</span>
+<span class="n">surveys_sql</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>Source: postgres 9.5.3 [student@pgstudio.research.sesync.org:5432/portal]
+From: surveys [35,549 x 10]
+
+   record_id month   day  year plot_id species_id   sex hindfoot_length
+       (int) (int) (int) (int)   (int)      (chr) (chr)           (int)
+1          3     7    16  1977       2         DM     F              37
+2          4     7    16  1977       7         DM     M              36
+3          5     7    16  1977       3         DM     M              35
+4          6     7    16  1977       1         PF     M              14
+5          7     7    16  1977       2         PE     F              NA
+6          8     7    16  1977       1         DM     M              37
+7          9     7    16  1977       1         DM     F              34
+8         10     7    16  1977       6         PF     F              20
+9         11     7    16  1977       5         DS     F              53
+10        12     7    16  1977       7         DM     M              38
+..       ...   ...   ...   ...     ...        ...   ...             ...
+Variables not shown: weight (int), person_id (int)
+</code></pre>
+</div>
+
+<p>Following those preliminary steps, we can use exactly the same analysis code as before to get the species counts for the 1990 winter months.</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">counts_1990w_sql</span> <span class="o">&lt;-</span>  <span class="n">surveys_sql</span> <span class="o">%&gt;%</span> <span class="n">filter</span><span class="p">(</span><span class="n">year</span> <span class="o">==</span> <span class="m">1990</span><span class="p">,</span> <span class="n">month</span> <span class="o">%</span><span class="k">in</span><span class="o">%</span> <span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">)</span> <span class="o">%&gt;%</span>
+                                     <span class="n">select</span><span class="p">(</span><span class="o">-</span><span class="n">year</span><span class="p">)</span> <span class="o">%&gt;%</span>
+                                     <span class="n">group_by</span><span class="p">(</span><span class="n">species_id</span><span class="p">)</span> <span class="o">%&gt;%</span>
+                                     <span class="n">summarise</span><span class="p">(</span><span class="n">count</span> <span class="o">=</span> <span class="n">n</span><span class="p">())</span>
+<span class="n">counts_1990w_sql</span>
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>Source: postgres 9.5.3 [student@pgstudio.research.sesync.org:5432/portal]
+From: &lt;derived table&gt; [?? x 2]
+
+   species_id count
+        (chr) (dbl)
+1          NA     1
+2          PP     1
+3          RF    10
+4          RM   115
+5          PC     7
+6          SH     7
+7          AB    25
+8          OL     7
+9          SF    13
+10         PF    19
+..        ...   ...
+</code></pre>
+</div>
+
+<p>In this case, dplyr translated the R commands to SQL and sent them in a single query to PostgreSQL. Note that the output is still stored on disk rather than in memory. The <code class="highlighter-rouge">collect</code> function can be used to import a remote table into R, as in <code class="highlighter-rouge">counts_1990w_local &lt;- collect(counts_1990w_sql)</code>.</p>
+
+<h2 id="additional-information">Additional information</h2>
+
+<p><a href="http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf" class="tooltipstered">Data wrangling with dplyr and tidyr (RStudio cheat sheet)</a></p>
+
+<p>One of several cheat sheets available on the RStudio website, it provides a brief, visual summary of all the key functions discussed in this lesson. It also lists some of the auxiliary functions that can be used within each type of expression, e.g. aggregation functions for summarize, “moving window” functions for mutate, etc.</p>
+
+<h2 id="exercise-solutions">Exercise solutions</h2>
+
+<h3 id="solution-1">Solution 1</h3>
+
+<p>If any species/day combination is missing, the corresponding cell after <code class="highlighter-rouge">spread</code> is filled with <code class="highlighter-rouge">NA</code>. To interpret missing values as zero counts, use the optional <code class="highlighter-rouge">fill</code> argument:</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">counts_spread</span> <span class="o">&lt;-</span> <span class="n">spread</span><span class="p">(</span><span class="n">counts_gather</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">species</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">count</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="m">0</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><a href="#exercise-1">Return</a></p>
+
+<h3 id="solution-2">Solution 2</h3>
+
+<p>Write code that returns the <em>record_id</em>, <em>sex</em> and <em>weight</em> of all surveyed individuals of <em>Reithrodontomys montanus</em> (RO).</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">surveys_RO</span> <span class="o">&lt;-</span> <span class="n">filter</span><span class="p">(</span><span class="n">surveys</span><span class="p">,</span> <span class="n">species_id</span> <span class="o">==</span> <span class="s2">"RO"</span><span class="p">)</span>
+<span class="n">select</span><span class="p">(</span><span class="n">surveys_RO</span><span class="p">,</span> <span class="n">record_id</span><span class="p">,</span> <span class="n">sex</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><a href="#exercise-2">Return</a></p>
+
+<h3 id="solution-3">Solution 3</h3>
+
+<p>Write code that returns the average weight and hindfoot length of <em>Dipodomys merriami</em> (DM) individuals observed in each month (irrespective of the year). Make sure to exclude <em>NA</em> values.</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">surveys_dm</span> <span class="o">&lt;-</span> <span class="n">filter</span><span class="p">(</span><span class="n">surveys</span><span class="p">,</span> <span class="n">species_id</span> <span class="o">==</span> <span class="s2">"DM"</span><span class="p">)</span>
+<span class="n">surveys_dm</span> <span class="o">&lt;-</span> <span class="n">group_by</span><span class="p">(</span><span class="n">surveys_dm</span><span class="p">,</span> <span class="n">month</span><span class="p">)</span>
+<span class="n">summarize</span><span class="p">(</span><span class="n">surveys_dm</span><span class="p">,</span> <span class="n">avg_wgt</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">na.rm</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">),</span>
+          <span class="n">avg_hfl</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">hindfoot_length</span><span class="p">,</span> <span class="n">na.rm</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">))</span>
+</code></pre>
+</div>
+
+<p><a href="#exercise-3">Return</a></p>
+
+<h3 id="solution-4">Solution 4</h3>
+
+<p>Return only the rows in <em>counts_1990w_join</em> that correspond to the most common species in each genus.</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">counts_1990w_join</span> <span class="o">&lt;-</span> <span class="n">group_by</span><span class="p">(</span><span class="n">counts_1990w_join</span><span class="p">,</span> <span class="n">genus</span><span class="p">)</span>
+<span class="n">filter</span><span class="p">(</span><span class="n">counts_1990w_join</span><span class="p">,</span> <span class="n">count</span> <span class="o">==</span> <span class="n">max</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
+</code></pre>
+</div>
+
+<p>Calculate the fraction of total counts by taxa (birds or rodents) represented by each species within that taxon.</p>
+
+<div class="language-r input highlighter-rouge"><pre class="highlight"><code><span class="n">counts_1990w_join</span> <span class="o">&lt;-</span> <span class="n">group_by</span><span class="p">(</span><span class="n">counts_1990w_join</span><span class="p">,</span> <span class="n">taxa</span><span class="p">)</span>
+<span class="n">mutate</span><span class="p">(</span><span class="n">counts_1990w_join</span><span class="p">,</span> <span class="n">prop_of_taxa</span> <span class="o">=</span> <span class="n">count</span> <span class="o">/</span> <span class="n">sum</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
+</code></pre>
+</div>
+
+<p><a href="#exercise-4">Return</a></p>
+
+      </div>
+    </div>
+
+  
+
+
+</body></html>
