@@ -4,9 +4,11 @@ output: html_notebook
 ---
 
 
+*****
+### 1 Preparing the data
+*****
 
-Load in data
-
+Loading in the transcript data
 ```{r}
 library(tidytext)
 library(tidyverse)
@@ -27,24 +29,30 @@ transcripts_df %>% head()
 
 ```
 
-Load in personality data
+*****
+Loading in the personality data
 ```{r}
 pers = read_delim("/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-personality/YouTube-Personality-Personality_impression_scores_train.csv", " ")
 ```
-Load in gender
+
+*****
+Loading in the gender data
 ```{r}
 gender = read.delim("/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-personality/YouTube-Personality-gender.csv", head=FALSE, sep=" ", skip = 1)
 names(gender) = c('vlogId', 'gender')
 head(gender)
 ```
-Join all data
+
+*****
+Joining the data
 ```{r}
 # vlogger_df = left_join(gender, pers)
 vlogger_df = left_join(gender, pers)
 head(vlogger_df)
 ```
 
-Create test set
+*****
+Creating the test set
 ```{r}
 testset_vloggers = vlogger_df %>% filter(is.na(Extr))
 head(testset_vloggers)
@@ -61,6 +69,7 @@ count_sentiment <- vlogger_tokenized %>%
   count(vlogId, sentiment)
 ```
 
+******
 Spread data
 
 ```{r}
@@ -68,6 +77,7 @@ sentiment_wide <- spread(count_sentiment, key = sentiment, value = n, fill = 0)
 
 ```
 
+******
 Combine
 ```{r}
 vlogger_features  <- inner_join(vlogger_df, sentiment_wide, by = "vlogId")  #%>% 
@@ -77,6 +87,7 @@ head(vlogger_features)
 ```
 
 
+******
 Correlate
 
 ```{r}
