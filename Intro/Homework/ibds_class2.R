@@ -155,9 +155,86 @@ mdy(d4)
 mdy(d5)
 
 # 16.3.4: 5
+# convert hours and minutes
+make_datetime_100 <- function(year, month, day, time) {
+  make_datetime(year, month, day, time %/% 100, time %% 100)
+}
 
+# create correct daytime tibble
+flights_dt <- flights %>% 
+  filter(!is.na(dep_time), !is.na(arr_time)) %>% 
+  mutate(
+    dep_time = make_datetime_100(year, month, day, dep_time),
+    arr_time = make_datetime_100(year, month, day, arr_time),
+    sched_dep_time = make_datetime_100(year, month, day, sched_dep_time),
+    sched_arr_time = make_datetime_100(year, month, day, sched_arr_time)
+  ) %>% 
+  select(origin, dest, ends_with("delay"), ends_with("time"))
+
+# which day of the week has the most delays
+
+flights_dt %>% 
+  mutate(weekday = wday(dep_time)) %>% 
+  group_by(weekday) %>% 
+  summarise(
+    avg_delay = mean(arr_delay, na.rm = TRUE)) %>% 
+  arrange(desc(avg_delay, .by_group = TRUE))
 
 # 16.4.5: 4 
+
+age <- function(d,m,y){
+  dmy <- dmy(paste(d,m,y, sep = "-"))
+  as.duration(today() - dmy)
+  }
+age(12,08,1992)
+
 # 19.2.1: 5 
-# 19.4.4: 1-2 
-# 19.5.5: 1
+t0 <- c(1,6,4,8,NA, NA)
+t1 <- c(1,6,7,8,NA,9)
+
+check_na <- function(x){
+  length(which(is.na(x)==TRUE))
+}
+both_na <- function(y,z) {
+   
+  stopifnot(length(y) == length(z)) 
+    
+  sum(check_na(y), check_na(z))
+}
+both_na(t0,t1)
+
+# 19.4.4: 1
+# ifelse will check for a condition and return a value dependent on the outcome. The return value is specified as an argument
+# and will depent on the outcome of the logical test. An if statement is also a logical test but if the condition is not satisfied
+# the code will continue to the next lines. 
+
+# ifelse will always have an output
+if (0 == TRUE) {
+  print("succes")
+}
+ifelse(0 == TRUE, "succes", "failure")
+
+# an if condition can be a chain of condition checks whereas ifelse can only check for one condition
+
+if (0 == TRUE) {
+  print("succes")
+} else if (1 == FALSE) {
+  print("failure")
+} else {
+  print("undecided")
+}
+
+# 2 
+
+greeting <- function(t){ 
+  if (hour(t) < 12 ) {
+    print("good morning")
+  } else if (hour(t) < 18) {
+    print("good afternoon")
+  } else {
+    print("good evening")
+  }
+}
+# 19.5.5: 1 ?
+commas <- function(...) stringr::str_c(..., collapse = "-")
+
