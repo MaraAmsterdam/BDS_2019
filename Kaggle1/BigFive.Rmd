@@ -1,5 +1,3 @@
-###edit by VUAKSIN
-
 ---
 title: "Big 5 DYPLRS"
 output: html_notebook
