@@ -33,14 +33,14 @@ pers = read_delim("/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-persona
 ```
 Load in gender
 ```{r}
-gender = read.delim("/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-personality/YouTube-Personality-gender.csv", head=FALSE, sep=" ", skip = 2)
+gender = read.delim("/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-personality/YouTube-Personality-gender.csv", head=FALSE, sep=" ", skip = 1)
 names(gender) = c('vlogId', 'gender')
 head(gender)
 ```
 Join all data
 ```{r}
 # vlogger_df = left_join(gender, pers)
-vlogger_df = pers
+vlogger_df = left_join(gender, pers)
 head(vlogger_df)
 ```
 
@@ -120,19 +120,26 @@ cor_bing <- caret::findCorrelation(cor_matrix_bing) + 6
 There are no correlations > .9, therefore no variables need to excluded.
 Fit linear model
 
-```{r}
-fit_lm_Extr <- lm(Extr ~ .-vlogId -Cons -Emot -Open -Agr, vlogger_features_bing)
-fit_lm_Cons <- lm(Cons ~ .-vlogId  -Extr -Emot -Open -Agr, vlogger_features_bing)
-fit_lm_Emot <- lm(Emot ~ .-vlogId  -Extr -Cons -Open -Agr, vlogger_features_bing)
-fit_lm_Open <- lm(Open ~ .-vlogId  -Extr -Cons -Extr -Agr, vlogger_features_bing)
-fit_lm_Agr <- lm(Agr ~ .-vlogId  -Emot -Cons -Open -Extr, vlogger_features_bing)
 
-summary(fit_lm_Extr)
-summary(fit_lm_Cons)
-summary(fit_lm_Emot)
-summary(fit_lm_Open)
-summary(fit_lm_Agr)
+```{r}
+
+lm_1 <- lm(formula = cbind(Extr, Agr, Cons, Emot, Open) ~ .-vlogId -gender , data = vlogger_features_bing)
+summary(lm_1)
+
+
 ```
+
+
+Check predictions on testset
+```{r}
+pred_mlm = predict(lm_1) 
+
+pred_mlm %>% 
+  write.csv("version1.csv", col.names = TRUE)
+```
+
+
+Add audio data
 ```{r}
 audio_df <- read_delim("/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-personality/YouTube-Personality-audiovisual_features.csv", delim = " ")
 
@@ -146,6 +153,10 @@ vlogger_features_audio <- audio_df %>%
   inner_join(vlogger_features_bing, audio_df,by = "vlogId")
 
 ```
+ 
+ 
+
+ 
  
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
