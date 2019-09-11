@@ -5,10 +5,10 @@ output: html_notebook
 
 
 *****
-##### 1 Loading data
+### 1 Preparing the data
 *****
 
-1.1 Transcript data
+Loading in the transcript data
 ```{r}
 library(tidytext)
 library(tidyverse)
@@ -30,13 +30,13 @@ transcripts_df %>% head()
 ```
 
 *****
-1.1 Personality data
+Loading in the personality data
 ```{r}
 pers = read_delim("/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-personality/YouTube-Personality-Personality_impression_scores_train.csv", " ")
 ```
 
 *****
-1.2 Gender data
+Loading in the gender data
 ```{r}
 gender = read.delim("/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-personality/YouTube-Personality-gender.csv", head=FALSE, sep=" ", skip = 2)
 names(gender) = c('vlogId', 'gender')
@@ -44,7 +44,7 @@ head(gender)
 ```
 
 *****
-1.3 Join the data
+Joining the data
 ```{r}
 # vlogger_df = left_join(gender, pers)
 vlogger_df = pers
@@ -52,7 +52,7 @@ head(vlogger_df)
 ```
 
 *****
-Create test set
+Creating the test set
 ```{r}
 testset_vloggers = vlogger_df %>% filter(is.na(Extr))
 head(testset_vloggers)
