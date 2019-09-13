@@ -1,0 +1,196 @@
+---
+title: "First Competition "
+output: html_notebook
+---
+
+
+### 1 Read and tidy the data
+*****
+
+*****
+##### 1.1 Read the transcript files
+```{r}
+library(tidytext) #load libraries
+library(tidyverse)
+
+list.files(path = "/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-personality/transcripts")
+transcript_files = dir("/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-personality/transcripts",
+                       full.names = TRUE) 
+
+vlogId = basename(transcript_files)
+vlogId = str_replace(vlogId, pattern = ".txt$", replacement = "")
+
+transcripts_df = tibble(vlogId=vlogId, Text = map_chr(transcript_files, ~ paste(readLines(.x), collapse = "\\n")),
+                        filename = transcript_files) %>% select(-filename)
+```
+
+*****
+##### 1.2 Read the personality impression scores
+```{r}
+pers = read_delim("/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-personality/YouTube-Personality-Personality_impression_scores_train.csv", " ")
+```
+
+*****
+##### 1.3 Read the genders
+```{r}
+gender = read.delim("/Users/maraoosterbaan/GitHub/BDS_2019/Kaggle1/youtube-personality/YouTube-Personality-gender.csv", 
+                    head=FALSE, sep=" ", skip = 1)
+names(gender) = c('vlogId', 'gender')
+```
+
+*****
+##### 1.4 Join the personality and gender data
+```{r}
+vlogger_df = left_join(gender, pers) 
+```
+
+*****
+##### 1.5 Creating the test set
+```{r}
+testset_vloggersId = vlogger_df %>% filter(is.na(Extr))
+```
+
+
+
+
+*****
+### 2. The analyses 
+*****
+
+*****
+##### 2.1 The NRC dictionary
+We chose the NRC dictionary because it is the biggest database, which includes the most words and variables (sentiments). Therefore, we assume it provides the most information. The high correlation test showed that there were 2 sentiments that loaded high on the other sentiments. We decided to exclude the positive and negative sentiment to be consistent.
+```{r}
+nrc <- get_sentiments("nrc") #load nrc database 
+
+vlogger_tokenized <- transcripts_df %>% 
+  unnest_tokens(token, Text, token = 'words') %>% #tokenize
+  anti_join(stop_words, by = c(token = "word"))  %>% #remove stopwords   
+  inner_join(get_sentiments('nrc'), by = c(token = 'word')) 
+
+count_sentiment <- vlogger_tokenized %>% #count amount of words per sentiment and per vlog
+  count(vlogId, sentiment)
+
+sentiment_wide <- spread(count_sentiment, key = sentiment, value = n, fill = 0) #get to wide format
+
+vlogger_features  <- inner_join(vlogger_df, sentiment_wide, by = "vlogId") 
+
+cor_matrix_five <- cor(vlogger_features[,7:16]) #check for correlations
+cor_five <- caret::findCorrelation(cor_matrix_five) + 6
+
+vlogger_features <- vlogger_features %>% #remove positive and negative sentiment
+  select(-negative,-positive)
+```
+
+*****
+##### 2.2 The BING dictionary
+To add extra information we added the positive and negative variables of the Bing library (Bing Liu et al. 2004), which we assume to be less redundant than the positive and negative sentiments from the NRC database. The correlation test showed that none of the variables had a correlation of 0.9, and therefore none of them are excluded.
+```{r}
+bing <- get_sentiments("bing") #load bing database
+
+vlogger_tokenized_bing <- transcripts_df %>% 
+  unnest_tokens(token, Text, token = 'words') %>% #tokenize
+  anti_join(stop_words, by = c(token = "word"))  %>% #remove stopwords
+  inner_join(bing, by = c(token = 'word')) 
+
+count_sentiment_bing <- vlogger_tokenized_bing %>% #count amount of positive and negative words per vlog
+  count(vlogId, sentiment)
+
+sentiment_wide_bing <- spread(count_sentiment_bing, key = sentiment, value = n, fill = 0) #get to wide format
+vlogger_features_bing  <- inner_join(vlogger_features, sentiment_wide_bing, by = "vlogId") 
+
+cor_matrix_bing <- cor(vlogger_features_bing[,7:16]) #check for correlations
+cor_bing <- caret::findCorrelation(cor_matrix_bing) + 6
+```
+
+*****
+##### 2.3 Word count
+According to Pennebaker, Francis and Booth (2001), the amount of words used, contain information about traits on the personality test.
+```{r}
+word_count <- transcripts_df %>% 
+  unnest_tokens(token, Text, token = 'words') %>% 
+  group_by(vlogId) %>%
+  tally(name = 'word count')
+```
+
+*****
+##### 2.4 Word length
+The same goes for word length (Pennebaker, Francis, & Booth., 2001).
+```{r}
+word_length <- transcripts_df %>% 
+  unnest_tokens(token, Text, token = 'words') %>% 
+  filter(str_length(token) > 6) %>%
+  group_by(vlogId) %>%
+  tally(name = 'lengthy words')
+```
+
+*****
+##### 2.5 Swear words
+According to Mairesse, Walker, Mehl and Moore (2007) the amount of swear words are a predictor for personality. 
+List of swear words might be obtained here -> https://raw.githubusercontent.com/MaraAmsterdam/BDS_2019/master/Kaggle1/swear.csv
+```{r}
+swearwods <- read.csv("swear.csv", header = F)
+
+swears <- transcripts_df %>% 
+  unnest_tokens(token, Text, token = 'words') %>% 
+  inner_join(swearwods, by = c(token = 'V1')) %>%
+  group_by(vlogId) %>%
+  tally(name = 'swear')
+```
+
+*****
+##### 2.5 Self-reference words
+According to Dewall, Buffardi, Bonser and Campbell (2011) the amount self-reference words are a predictor for personality.
+```{r}
+selfreference <- transcripts_df %>% 
+  unnest_tokens(token, Text, token = 'words') %>% 
+  filter(token == "i"  | token ==  "me" | token == "myself" | token == "i'm" | token == "mine" |
+           token == "my") %>%
+  group_by(vlogId) %>%
+  tally(name = 'selfwords') 
+```
+
+*****
+##### 2.6 Joining the data
+```{r}
+finaldata <- left_join(word_length, vlogger_features_bing, by = 'vlogId') %>% 
+  left_join(word_count, by = 'vlogId') %>%
+  left_join(selfreference, by = 'vlogId') %>%
+  left_join(swears, by = "vlogId")
+
+finaldata$swear[is.na(finaldata$swear)] = 0
+finaldata$selfwords[is.na(finaldata$selfwords)] = 0 
+
+finaldata <- finaldata %>% 
+  select(-gender) %>% select(-vlogId) 
+```
+
+
+*****
+### 3 Fit LM & Making predictions
+*****
+
+*****
+##### 3.1 Fit linear model
+```{r, echo = TRUE}
+lm_1 <- lm(formula = cbind(Extr, Agr, Cons, Emot, Open) ~ ., data = finaldata)
+```
+
+*****
+##### 3.2 Predicting the testset
+```{r}
+testset <- finaldata %>% 
+  filter(is.na(Extr))
+pred_mlm = predict(lm_1, new = testset) 
+```
+
+*****
+##### 3.3 Writing predictions in CSV file
+```{r}
+final <- cbind(testset_vloggersId[,1],pred_mlm) 
+csv_final <- as_data_frame(final)  %>% 
+  gather(key = "axis", value = "value", -V1) %>% 
+  arrange(V1, axis) %>% 
+  unite(Id, V1, axis) %>% 
+  write.csv("predictions.csv")
+```
